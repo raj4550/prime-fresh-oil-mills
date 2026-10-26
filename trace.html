@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Batch check | Prime Fresh Oil Mills</title>
+  <link rel="icon" type="image/png" href="/img/favicon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <main class="wrap trace">
+    <p><a class="link" href="/">Back to website</a></p>
+    <h1>Check a batch</h1>
+    <p>Enter the batch code printed on your dispatch documents. A QR code on those documents can open this page with the code already filled in.</p>
+    <form id="tf"><label class="sr" for="code">Batch code</label><input id="code" placeholder="Example: DEMO-0001" autocomplete="off" /><button class="btn btn--green" type="submit">Check batch</button></form>
+    <div id="res" role="status"></div>
+  </main>
+  <script>
+    /* The mill adds real batches here. DEMO-0001 is made-up sample data to show the layout. */
+    var BATCHES = {
+      "DEMO-0001": { sample: true, product: "Yellow mustard oil", packed: "Sample date", pack: "Sample packing", report: "Lab report would open here once the mill uploads it" }
+    };
+    var res = document.getElementById("res"), input = document.getElementById("code");
+    function show(code) {
+      code = code.trim().toUpperCase(); res.textContent = "";
+      if (!code) return;
+      var b = BATCHES[code], h = document.createElement("div");
+      if (!b) { h.textContent = "No record found for " + code + ". Check the code or contact the mill on +91 90572 92529."; res.appendChild(h); return; }
+      var rows = [["Batch", code], ["Product", b.product], ["Packed on", b.packed], ["Packing", b.pack], ["Lab report", b.report]];
+      if (b.sample) { var t = document.createElement("span"); t.className = "trace__tag"; t.textContent = "Sample data, not a real batch"; h.appendChild(t); }
+      var dl = document.createElement("dl");
+      rows.forEach(function (r) { var dt = document.createElement("dt"), dd = document.createElement("dd"); dt.textContent = r[0]; dd.textContent = r[1]; dl.appendChild(dt); dl.appendChild(dd); });
+      h.appendChild(dl); res.appendChild(h);
+    }
+    document.getElementById("tf").addEventListener("submit", function (e) { e.preventDefault(); show(input.value); });
+    var q = new URLSearchParams(location.search).get("batch"); if (q) { input.value = q; show(q); }
+  </script>
+</body>
+</html>
