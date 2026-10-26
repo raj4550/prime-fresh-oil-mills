@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prime Fresh Oil Mills: owner dashboard and assistant demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Hanken+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--green:#0B6B3A;--deep:#06301B;--forest:#0A4A2A;--leaf:#4A8F2E;--gold:#F2BE45;--sage:#F2F6EC;--text:#10261A;--muted:#58695E;--line:#d9e3d0;--hot:#B4421A;--warm:#9A6B00}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:"Hanken Grotesk",system-ui,sans-serif;color:var(--text);background:var(--sage);line-height:1.5}
+h1,h2,h3{font-family:"Bricolage Grotesque","Hanken Grotesk",system-ui,sans-serif;margin:0;line-height:1.15}
+.banner{background:var(--gold);color:var(--deep);font-size:14px;padding:8px 16px;text-align:center;font-weight:500}
+header{background:var(--deep);color:#fff;padding:20px 16px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+header .wrap{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+header h1{font-size:clamp(22px,4vw,32px);font-weight:800}
+header p{margin:4px 0 0;color:#cfe3d4;font-size:15px}
+.back{color:var(--gold);font-weight:700;text-decoration:none;font-size:15px}
+nav{display:flex;gap:8px;padding:16px 0}
+nav button{font:inherit;font-weight:700;padding:10px 18px;border-radius:999px;border:2px solid var(--green);background:transparent;color:var(--green);cursor:pointer}
+nav button[aria-selected=true]{background:var(--green);color:#fff}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.kpi b{display:block;font-family:"Bricolage Grotesque",sans-serif;font-size:30px;color:var(--green)}
+.kpi span{color:var(--muted);font-size:14px}
+.board{display:grid;grid-template-columns:repeat(5,minmax(150px,1fr));gap:10px;overflow-x:auto;padding-bottom:6px;margin-bottom:24px}
+.col{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;min-width:150px}
+.col h3{font-size:16px}
+.col small{color:var(--muted)}
+.bar{height:10px;border-radius:5px;background:var(--sage);margin:8px 0 10px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--leaf);transform-origin:left;animation:grow .9s ease-out}
+@keyframes grow{from{transform:scaleX(0)}}
+@media (prefers-reduced-motion:reduce){.bar i{animation:none}}
+.chip{display:block;font-size:13px;background:var(--sage);border-radius:6px;padding:4px 8px;margin-top:6px}
+.filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+select,input[type=text]{font:inherit;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--text)}
+.tablewrap{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:720px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);font-size:15px}
+th{font-size:14px;color:var(--muted);font-weight:500}
+tbody tr{cursor:pointer}
+tbody tr:hover,tbody tr[aria-selected=true]{background:#f7faf2}
+.score{display:inline-block;min-width:34px;text-align:center;border-radius:6px;padding:2px 8px;font-weight:700;color:#fff}
+.s-hot{background:var(--hot)}.s-warm{background:var(--warm)}.s-low{background:#6b7a70}
+.detail{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px;margin-top:16px}
+.detail h3{font-size:20px;margin-bottom:6px}
+.why{margin:8px 0;padding-left:18px;color:var(--muted)}
+.reply{background:var(--sage);border-left:4px solid var(--gold);padding:10px 14px;border-radius:6px;margin:10px 0;white-space:pre-wrap}
+.btn{display:inline-block;font:inherit;font-weight:700;background:var(--gold);color:var(--deep);border:0;border-radius:8px;padding:10px 16px;cursor:pointer;text-decoration:none}
+.note{color:var(--muted);font-size:14px;margin:8px 0 0}
+.chat{background:#fff;border:1px solid var(--line);border-radius:10px;max-width:720px;display:flex;flex-direction:column}
+.log{height:380px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.m{max-width:85%;padding:10px 14px;border-radius:12px;white-space:pre-wrap}
+.bot{background:var(--sage);align-self:flex-start}
+.me{background:var(--green);color:#fff;align-self:flex-end}
+.quick{display:flex;flex-wrap:wrap;gap:8px;padding:0 16px 12px}
+.quick button{font:inherit;font-size:14px;border:1px solid var(--green);color:var(--green);background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer}
+.send{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line)}
+.send input{flex:1;min-width:0}
+.m a{color:var(--forest);font-weight:700}
+[hidden]{display:none!important}
+@media (max-width:640px){.board{grid-template-columns:repeat(5,170px)}}
+</style>
+</head>
+<body>
+<div class="banner">Demo with sample data. Every company, quantity and enquiry below is made up to show how the system would work.</div>
+<header>
+  <div class="wrap">
+    <div>
+      <h1>Prime Fresh Oil Mills: owner view</h1>
+      <p>What the owner would see once enquiries are captured, scored and answered automatically.</p>
+    </div>
+    <a class="back" href="/">Back to the website</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav role="tablist" aria-label="Demo sections">
+    <button role="tab" id="t1" aria-selected="true" aria-controls="p1">Owner dashboard</button>
+    <button role="tab" id="t2" aria-selected="false" aria-controls="p2">Product assistant</button>
+  </nav>
+
+  <section id="p1" role="tabpanel" aria-labelledby="t1">
+    <div class="kpis" id="kpis"></div>
+    <h2 style="font-size:22px;margin-bottom:10px">Where each enquiry stands</h2>
+    <div class="board" id="board"></div>
+    <h2 style="font-size:22px;margin-bottom:10px">All enquiries</h2>
+    <div class="filters">
+      <label>Product <select id="fp"><option value="">All products</option></select></label>
+      <label>Country <select id="fc"><option value="">All countries</option></select></label>
+      <label>Priority <select id="fs"><option value="">All</option><option value="hot">Hot</option><option value="warm">Warm</option><option value="low">Low</option></select></label>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Company</th><th>Buyer type</th><th>Country</th><th>Products</th><th>Tonnes</th><th>Stage</th><th>Priority</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="detail" id="detail" hidden></div>
+    <p class="note">Priority score: quantity (up to 40), verified company (30), buyer type (up to 20), sample requested (10). The owner can change these weights. Quantities are in metric tonnes. No prices are shown because none have been confirmed.</p>
+  </section>
+
+  <section id="p2" role="tabpanel" aria-labelledby="t2" hidden>
+    <h2 style="font-size:22px;margin-bottom:6px">Product assistant</h2>
+    <p class="note" style="margin-bottom:12px">Answers only from the product list and contact details the owner has confirmed. Anything else goes to the team on WhatsApp. This demo uses fixed rules, not a live AI model.</p>
+    <div class="chat">
+      <div class="log" id="log" aria-live="polite"></div>
+      <div class="quick" id="quick"></div>
+      <form class="send" id="form">
+        <input type="text" id="q" aria-label="Ask a question" placeholder="Ask about products, samples or private label">
+        <button class="btn" type="submit">Ask</button>
+      </form>
+    </div>
+  </section>
+</main>
+<div style="height:40px"></div>
+
+<script>
+var WA="919057292529";
+var STAGES=["New","Contacted","Sample sent","Quote sent","Won"];
+var LEADS=[
+{id:1,co:"Sample Foods Pvt Ltd",type:"Oil brand",cc:"India",prod:["Yellow mustard oil"],mt:40,ver:true,sample:true,stage:"New",age:"4 min ago"},
+{id:2,co:"Sample Retail Brands",type:"Private label",cc:"India",prod:["Yellow mustard oil","Sesame oil"],mt:25,ver:true,sample:false,stage:"Contacted",age:"2 h ago"},
+{id:3,co:"Sample Gulf Trading",type:"Trader",cc:"UAE",prod:["Sesame seeds","Black sesame seeds"],mt:60,ver:true,sample:true,stage:"Sample sent",age:"1 day ago"},
+{id:4,co:"Sample Snacks Co",type:"FMCG",cc:"India",prod:["Groundnut seeds"],mt:12,ver:false,sample:true,stage:"New",age:"35 min ago"},
+{id:5,co:"Sample Feed Mills",type:"Trader",cc:"Nepal",prod:["Yellow mustard cake","Black mustard cake"],mt:30,ver:true,sample:false,stage:"Quote sent",age:"3 days ago"},
+{id:6,co:"Sample Kitchen Foods",type:"FMCG",cc:"Bangladesh",prod:["Black mustard seeds"],mt:8,ver:false,sample:false,stage:"Contacted",age:"5 h ago"},
+{id:7,co:"Sample Organic Co",type:"Oil brand",cc:"India",prod:["Sesame oil"],mt:15,ver:true,sample:true,stage:"Won",age:"6 days ago"},
+{id:8,co:"Sample Small Buyer",type:"Trader",cc:"India",prod:["Groundnut seeds"],mt:1,ver:false,sample:false,stage:"New",age:"50 min ago"}
+];
+function score(l){
+  var q=l.mt>=20?40:l.mt>=5?20:5,v=l.ver?30:0,t=(l.type==="Oil brand"||l.type==="Private label"||l.type==="FMCG")?20:10,s=l.sample?10:0;
+  return {n:q+v+t+s,why:["Quantity "+l.mt+" MT: "+q+" points",l.ver?"Verified company: 30 points":"Company not verified: 0 points","Buyer type "+l.type+": "+t+" points",l.sample?"Asked for a sample: 10 points":"No sample request: 0 points"]};
+}
+function pri(n){return n>=70?"hot":n>=40?"warm":"low"}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+LEADS.forEach(function(l){var s=score(l);l.score=s.n;l.why=s.why;l.pri=pri(s.n)});
+
+function kpis(){
+  var hot=LEADS.filter(function(l){return l.pri==="hot"}).length;
+  var open=LEADS.filter(function(l){return l.stage!=="Won"});
+  var mt=open.reduce(function(a,l){return a+l.mt},0);
+  document.getElementById("kpis").innerHTML=
+   [[LEADS.length,"enquiries this month"],[hot,"hot enquiries to call first"],[mt+" MT","open tonnage"],["Under 1 min","automatic first reply"]]
+   .map(function(k){return '<div class="kpi"><b>'+k[0]+'</b><span>'+k[1]+'</span></div>'}).join("");
+}
+function board(){
+  var max=Math.max.apply(null,STAGES.map(function(s){return LEADS.filter(function(l){return l.stage===s}).reduce(function(a,l){return a+l.mt},0)}))||1;
+  document.getElementById("board").innerHTML=STAGES.map(function(s){
+    var ls=LEADS.filter(function(l){return l.stage===s}),mt=ls.reduce(function(a,l){return a+l.mt},0);
+    return '<div class="col"><h3>'+s+'</h3><small>'+ls.length+' enquiries, '+mt+' MT</small><div class="bar"><i style="width:'+(mt/max*100)+'%"></i></div>'+
+      ls.map(function(l){return '<span class="chip">'+esc(l.co)+'</span>'}).join("")+'</div>';
+  }).join("");
+}
+function filters(){
+  var ps={},cs={};
+  LEADS.forEach(function(l){l.prod.forEach(function(p){ps[p]=1});cs[l.cc]=1});
+  fill("fp",Object.keys(ps).sort());fill("fc",Object.keys(cs).sort());
+  ["fp","fc","fs"].forEach(function(id){document.getElementById(id).addEventListener("change",rows)});
+}
+function fill(id,arr){var el=document.getElementById(id);arr.forEach(function(v){var o=document.createElement("option");o.value=v;o.textContent=v;el.appendChild(o)})}
+var sel=null;
+function rows(){
+  var p=fp.value,c=fc.value,s=fs.value;
+  var ls=LEADS.filter(function(l){return (!p||l.prod.indexOf(p)>-1)&&(!c||l.cc===c)&&(!s||l.pri===s)}).sort(function(a,b){return b.score-a.score});
+  var tb=document.getElementById("rows");
+  if(!ls.length){tb.innerHTML='<tr><td colspan="7">No enquiries match these filters. Clear a filter to see more.</td></tr>';return}
+  tb.innerHTML=ls.map(function(l){
+    return '<tr tabindex="0" data-id="'+l.id+'" aria-selected="'+(sel===l.id)+'"><td>'+esc(l.co)+'<br><small style="color:var(--muted)">'+l.age+'</small></td><td>'+l.type+'</td><td>'+l.cc+'</td><td>'+esc(l.prod.join(", "))+'</td><td>'+l.mt+'</td><td>'+l.stage+'</td><td><span class="score s-'+l.pri+'">'+l.score+'</span> '+cap(l.pri)+'</td></tr>';
+  }).join("");
+  [].forEach.call(tb.querySelectorAll("tr[data-id]"),function(tr){
+    function open(){show(+tr.getAttribute("data-id"))}
+    tr.addEventListener("click",open);
+    tr.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();open()}});
+  });
+}
+function show(id){
+  sel=id;rows();
+  var l=LEADS.filter(function(x){return x.id===id})[0],d=document.getElementById("detail");
+  var msg="Hello "+l.co+", thank you for your enquiry about "+l.prod.join(" and ")+" ("+l.mt+" MT). We have received it and our team will send you a quotation. Could you confirm your delivery location and preferred packing?\n\nPrime Fresh Oil Mills, +91 90572 92529";
+  d.hidden=false;
+  d.innerHTML='<h3>'+esc(l.co)+'</h3><div>'+l.type+' from '+l.cc+', '+l.mt+' MT of '+esc(l.prod.join(", "))+'. Stage: '+l.stage+'.</div>'+
+   '<p style="margin:10px 0 0"><b>Why this priority</b></p><ul class="why">'+l.why.map(function(w){return '<li>'+esc(w)+'</li>'}).join("")+'</ul>'+
+   '<p style="margin:10px 0 0"><b>Automatic first reply (sent within a minute)</b></p><div class="reply">'+esc(msg)+'</div>'+
+   '<a class="btn" target="_blank" rel="noopener" href="https://wa.me/'+WA+'?text='+encodeURIComponent(msg)+'">Preview in WhatsApp</a>'+
+   '<p class="note">In the live system this message goes to the buyer. Here it only opens a draft.</p>';
+  d.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+/* Assistant: fixed rules over confirmed facts only */
+var KB=[
+ {k:["yellow mustard oil","mustard oil","hero"],a:"Yellow mustard oil is our best-selling oil, supplied in bulk to oil brands, FMCG and private-label businesses. Tell me the quantity in tonnes, delivery location and packing you need and the team will quote."},
+ {k:["sesame"],a:"We supply sesame seeds (a best seller), black sesame seeds and sesame oil (also a best seller)."},
+ {k:["groundnut","peanut"],a:"Groundnut seeds are one of our best sellers. Add them to the enquiry sheet with your quantity and destination."},
+ {k:["cake","de-oiled","deoiled","feed"],a:"We list yellow mustard cake and black mustard cake. Other cakes can be requested through the custom product line on the quote form."},
+ {k:["black mustard","seed","seeds"],a:"Seeds we list: yellow mustard, black mustard, sesame, black sesame and groundnut."},
+ {k:["private label","own brand","white label"],a:"Yes, there is a private-label path on the website. Start a quote, choose private label as the buyer type, and the team will talk through your requirements."},
+ {k:["sample"],a:"You can ask for a sample inside the quote form. The team confirms what can be sent."},
+ {k:["price","rate","cost","quote","quotation"],a:"Prices depend on product, quantity, destination and packing, so we quote per enquiry. Use Request quote on the site, or send the details on WhatsApp."},
+ {k:["certificate","fssai","iso","lab","test report","spec"],a:"I cannot confirm certificates or lab reports here. You can ask for a spec sheet or test report in the quote form, and the team will share the documents they hold."},
+ {k:["moq","minimum","capacity"],a:"I do not have a confirmed minimum order or capacity figure. The team will answer this directly for your product."},
+ {k:["address","where","location","visit"],a:"The mill address is being confirmed and will appear on the contact panel. For now, call or WhatsApp +91 90572 92529."},
+ {k:["phone","call","contact","email","whatsapp"],a:"Phone and WhatsApp: +91 90572 92529. Email: Puneet2garg@gmail.com."},
+ {k:["product","catalog","catalogue","what do you","list"],a:"Oils: yellow mustard oil, sesame oil. Seeds: yellow mustard, black mustard, sesame, black sesame, groundnut. De-oiled cakes: yellow mustard cake, black mustard cake. Anything else, ask for a custom product."}
+];
+var QUICK=["What products do you supply?","Can I get a sample?","Do you do private label?","What is the price?","Do you have certificates?"];
+function add(t,who,html){var d=document.createElement("div");d.className="m "+who;if(html)d.innerHTML=html;else d.textContent=t;log.appendChild(d);log.scrollTop=log.scrollHeight}
+function answer(q){
+  var s=q.toLowerCase();
+  for(var i=0;i<KB.length;i++){for(var j=0;j<KB[i].k.length;j++){if(s.indexOf(KB[i].k[j])>-1){return {t:KB[i].a}}}}
+  return {t:"I do not have a confirmed answer to that, so I will not guess. ",wa:q};
+}
+function ask(q){
+  if(!q.trim())return;
+  add(q,"me");
+  var r=answer(q);
+  if(r.wa){add("","bot",esc(r.t)+'<a target="_blank" rel="noopener" href="https://wa.me/'+WA+'?text='+encodeURIComponent("Hello, I have a question: "+q)+'">Send this question to the team on WhatsApp</a>')}
+  else add(r.t,"bot");
+}
+var log=document.getElementById("log");
+add("Hello. I can answer questions about Prime Fresh Oil Mills products, samples and quotes. What would you like to know?","bot");
+document.getElementById("quick").innerHTML=QUICK.map(function(q){return '<button type="button">'+q+'</button>'}).join("");
+document.getElementById("quick").addEventListener("click",function(e){if(e.target.tagName==="BUTTON")ask(e.target.textContent)});
+document.getElementById("form").addEventListener("submit",function(e){e.preventDefault();var i=document.getElementById("q");ask(i.value);i.value=""});
+
+/* Tabs */
+function tab(n){
+  [1,2].forEach(function(i){document.getElementById("t"+i).setAttribute("aria-selected",i===n);document.getElementById("p"+i).hidden=i!==n});
+}
+document.getElementById("t1").onclick=function(){tab(1)};
+document.getElementById("t2").onclick=function(){tab(2)};
+kpis();board();filters();rows();
+</script>
+</body>
+</html>
